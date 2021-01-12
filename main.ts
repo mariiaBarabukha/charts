@@ -10,3 +10,6 @@ xAxis.addToCanvas();
 let yAxis:Axises.YAxis = new Axises.YAxis(400, 10);
 yAxis.setStartCoordinate(new Figures.Point(100, 600));
 yAxis.addToCanvas();
+
+let myGrid:Grid.HorizontalGrid = new Grid.HorizontalGrid(300,400,20,new Figures.Point(100,600));
+myGrid.draw();

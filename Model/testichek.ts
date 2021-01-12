@@ -1,1 +1,0 @@
-const zhopka:string = "Masha zhopka";

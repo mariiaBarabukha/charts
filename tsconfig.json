@@ -11,6 +11,10 @@
         "./Basics/Figures/Point.ts",
         "./Basics/Figures/MyLine.ts",
 
+        "./Basics/Grid/HorizontalGrid.ts",
+        "./Basics/Grid/VerticalGrid.ts",
+        "./Basics/Grid/CombinedGrid.ts",
+
         "./Basics/Figures/Arrow.ts",        
 
         "./Basics/Figures/ArrowHeads/ArrowHead.ts",

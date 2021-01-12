@@ -7,7 +7,6 @@ namespace Figures.ArrowHeads{
         }
 
         public draw(color: string = Models.Model.def_color, angle:number, lineWidth:number = Models.Model.def_lineWidth){
-            console.log(angle);
             context.save();
             context.beginPath();
             context.translate(this.start.x, this.start.y);
