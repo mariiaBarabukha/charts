@@ -6,6 +6,22 @@
         "sourceMap": true
     },
     "files": [   
+        "./Model/Model.ts",
+
+        "./Basics/Figures/Point.ts",
+        "./Basics/Figures/MyLine.ts",
+
+        "./Basics/Figures/Arrow.ts",        
+
+        "./Basics/Figures/ArrowHeads/ArrowHead.ts",
+        "./Basics/Figures/ArrowHeads/SimpleArrowHead.ts",
+        "./Basics/Figures/ArrowHeads/TriangleArrowHead.ts",
+        
+        "./Basics/Axises/Axis.ts",
+        "./Basics/Axises/xAxis.ts",    
+        "./Basics/Axises/yAxis.ts",     
+
+        
         "main.ts"
     ]
 }
