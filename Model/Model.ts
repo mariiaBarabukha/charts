@@ -16,8 +16,10 @@ namespace Models{
         static def_lineWidth:number = 1;
         static def_color:string = "black";
 
-        static def_arrowHeadWidth = 5;
-        static def_arrowHeadHeight = 10;
+        static def_arrowHeadWidth:number = 5;
+        static def_arrowHeadHeight:number = 10;
+
+        static margin:number = 30;
 
         public static setContext(context: CanvasRenderingContext2D){
             this.context = context;

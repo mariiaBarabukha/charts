@@ -4,7 +4,7 @@ namespace Axises{
         maxVal:number;
         minVal:number;
               
-        margin:number = 30;
+        
 
         startPoint: Figures.Point = new Figures.Point(0, Models.Model.canvas.height);
         finishPoint:Figures.Point;
@@ -17,12 +17,12 @@ namespace Axises{
         }
 
         public setMargin(m:number){
-            this.margin = m;
+            Models.Model.margin = m;
         }
 
         public setStartCoordinate(s:Figures.Point){
-            this.startPoint.x = s.x+this.margin;
-            this.startPoint.y = s.y-this.margin;
+            this.startPoint.x = s.x+Models.Model.margin;
+            this.startPoint.y = s.y-Models.Model.margin;
         }
 
         protected abstract calculateFinishPoint():Figures.Point;
