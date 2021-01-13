@@ -16,7 +16,7 @@ var Models;
             return this.context;
         }
     }
-    Model.def_lineWidth = 1;
+    Model.def_lineWidth = 2;
     Model.def_color = "black";
     Model.def_arrowHeadWidth = 5;
     Model.def_arrowHeadHeight = 10;
@@ -52,25 +52,56 @@ var Figures;
     }
     Figures.MyLine = MyLine;
 })(Figures || (Figures = {}));
+var Figures;
+(function (Figures) {
+    class Dot {
+        constructor(p, color = "red") {
+            this.context = Models.Model.getContext();
+            this.radius = 3;
+            console.log(p);
+            this.p = p;
+            this.color = color;
+        }
+        setRadius(r) {
+            this.radius = r;
+        }
+        getRadius() {
+            return this.radius;
+        }
+        draw() {
+            context.save();
+            context.beginPath();
+            context.fillStyle = this.color;
+            context.arc(this.p.x, this.p.y, this.radius, 0, Math.PI * 2);
+            context.fill();
+            context.restore();
+        }
+    }
+    Figures.Dot = Dot;
+})(Figures || (Figures = {}));
 var Grid;
 (function (Grid_1) {
     class Grid {
-        constructor(length_x, length_y, intervals, start) {
+        constructor(length_x, length_y, start, intervals1, intervals2 = 0) {
             this.context = Models.Model.getContext();
             this.length_x = length_x;
             this.length_y = length_y;
-            this.intervals = intervals;
+            this.intervals1 = intervals1;
+            this.intervals2 = intervals2;
             this.start = start;
             console.log(this);
             console.log(this.start);
+        }
+        setGridLineWidth(w) {
+            this.lineWidth = w;
         }
         draw() {
             context.save();
             context.beginPath();
             //don't forget to delete margin
-            context.translate(this.start.x + Models.Model.margin, this.start.y - Models.Model.margin);
+            context.translate(this.start.x, this.start.y);
             context.strokeStyle = "black";
-            context.lineWidth = Models.Model.def_lineWidth;
+            context.lineWidth = this.lineWidth;
             this.markeTheLines();
             context.stroke();
             context.restore();
@@ -81,11 +112,11 @@ var Grid;
 var Grid;
 (function (Grid) {
     class HorizontalGrid extends Grid.Grid {
-        constructor(length_x, length_y, intervals, start) {
-            super(length_x, length_y, intervals, start);
+        constructor(length_x, length_y, start, intervals) {
+            super(length_x, length_y, start, intervals);
         }
         markeTheLines() {
-            for (let i = -this.length_y + this.intervals; i < 0; i += this.intervals) {
+            for (let i = -this.length_y + this.intervals1; i < 0; i += this.intervals1) {
                 context.moveTo(0, i);
                 context.lineTo(this.length_x, i);
             }
@@ -96,11 +127,11 @@ var Grid;
 var Grid;
 (function (Grid) {
     class VerticalGrid extends Grid.Grid {
-        constructor(length_x, length_y, intervals, start) {
-            super(length_x, length_y, intervals, start);
+        constructor(length_x, length_y, start, intervals) {
+            super(length_x, length_y, start, intervals);
         }
         markeTheLines() {
-            for (let i = this.intervals; i <= this.length_x - this.intervals; i += this.intervals) {
+            for (let i = this.intervals1; i <= this.length_x - this.intervals1; i += this.intervals1) {
                 context.moveTo(i, 0);
                 context.lineTo(i, -this.length_y);
             }
@@ -111,15 +142,16 @@ var Grid;
 var Grid;
 (function (Grid) {
     class CombinedGrid extends Grid.Grid {
-        constructor(length_x, length_y, intervals, start) {
-            super(length_x, length_y, intervals, start);
+        constructor(length_x, length_y, start, intervals, intervals2) {
+            console.log(intervals, intervals2);
+            super(length_x, length_y, start, intervals, intervals2);
         }
         markeTheLines() {
-            for (let i = -this.length_y + this.intervals; i < 0; i += this.intervals) {
+            for (let i = -this.length_y + this.intervals1; i < 0; i += this.intervals1) {
                 context.moveTo(0, i);
                 context.lineTo(this.length_x, i);
             }
-            for (let i = this.intervals; i <= this.length_x - this.intervals; i += this.intervals) {
+            for (let i = this.intervals2; i <= this.length_x - this.intervals2; i += this.intervals2) {
                 context.moveTo(i, 0);
                 context.lineTo(i, -this.length_y);
             }
@@ -203,8 +235,8 @@ var Axises;
             Models.Model.margin = m;
         }
         setStartCoordinate(s) {
-            this.startPoint.x = s.x + Models.Model.margin;
-            this.startPoint.y = s.y - Models.Model.margin;
+            this.startPoint.x = s.x;
+            this.startPoint.y = s.y;
         }
         addToCanvas() {
             console.log(this.length);
@@ -238,16 +270,102 @@ var Axises;
     }
     Axises.YAxis = YAxis;
 })(Axises || (Axises = {}));
+var Charts;
+(function (Charts) {
+    class ScatterChart {
+        constructor(startPoint, width = 300, height = 300) {
+            this.context = Models.Model.getContext();
+            this.minVal_x = 0;
+            this.minVal_y = 0;
+            this.amountOfElements = 0;
+            this.x_data = [];
+            this.y_data = [];
+            this.scale_x = 1;
+            this.scale_y = 1;
+            this.startPoint = new Figures.Point(startPoint.x + Models.Model.margin, startPoint.y + Models.Model.margin);
+            this.width = width;
+            this.height = height;
+        }
+        setScale_x(s) {
+            this.scale_x = s;
+        }
+        setScale_y(s) {
+            this.scale_y = s;
+        }
+        addToCanvas() {
+            let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
+            xAxis.setStartCoordinate(this.startPoint);
+            xAxis.addToCanvas();
+            let yAxis = new Axises.YAxis(this.height, this.maxVal_y, this.minVal_y);
+            yAxis.setStartCoordinate(this.startPoint);
+            yAxis.addToCanvas();
+            this.int1 = (this.width - Models.Model.margin) / (this.maxVal_x - this.minVal_x);
+            this.int2 = (this.height - Models.Model.margin) / (this.maxVal_y - this.minVal_y);
+            if (this.int1 < 20) {
+                this.setScale_x(20 / this.int1);
+            }
+            if (this.int2 < 20) {
+                this.setScale_y(20 / this.int2);
+            }
+            let myGrid = new Grid.CombinedGrid(xAxis.length, yAxis.length, this.startPoint, this.int1 * this.scale_x, this.int2 * this.scale_y);
+            myGrid.setGridLineWidth(1);
+            myGrid.draw();
+            this.addDots();
+        }
+        addDots() {
+            context.save();
+            console.log(this.int1, this.int2);
+            context.translate(this.startPoint.x, this.startPoint.y);
+            for (let i = 0; i < this.amountOfElements; i++) {
+                let d = new Figures.Dot(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1, -(this.y_data[i] - this.minVal_y) * this.int2));
+                d.draw();
+            }
+            context.restore();
+        }
+        addData(dataJSON) {
+            //add parser.ts
+            let data = JSON.parse(dataJSON);
+            this.data = data["data"];
+            this.description = data["description"];
+            this.amountOfElements = this.data.length;
+            for (let i = 0; i < this.amountOfElements; i++) {
+                this.x_data[i] = (this.data[i])[this.description["x"]];
+                this.y_data[i] = (this.data[i])[this.description["y"]];
+            }
+            console.log(typeof (typeof this.x_data[0]));
+            this.maxVal_x = (typeof this.x_data[0] == "string") ? this.amountOfElements : this.max(this.x_data);
+            this.maxVal_y = (typeof this.y_data[0] == "string") ? this.amountOfElements : this.max(this.y_data);
+            console.log(this.maxVal_x, this.maxVal_y);
+        }
+        max(d) {
+            // let n = this.x_data.map(x => Number.parseInt(x));
+            let m = d[0];
+            for (let i = 1; i < this.amountOfElements; i++) {
+                if (d[i] > m) {
+                    m = d[i];
+                }
+            }
+            return m;
+        }
+    }
+    Charts.ScatterChart = ScatterChart;
+})(Charts || (Charts = {}));
 const canvas = document.getElementById('chart');
 const context = canvas.getContext('2d');
 Models.Model.setContext(context);
 Models.Model.canvas = canvas;
-let xAxis = new Axises.XAxis(300, 10);
-xAxis.setStartCoordinate(new Figures.Point(100, 600));
-xAxis.addToCanvas();
-let yAxis = new Axises.YAxis(400, 10);
-yAxis.setStartCoordinate(new Figures.Point(100, 600));
-yAxis.addToCanvas();
-let myGrid = new Grid.CombinedGrid(300, 400, 50, new Figures.Point(100, 600));
-myGrid.draw();
+// let xAxis:Axises.XAxis = new Axises.XAxis(300, 10);
+// xAxis.setStartCoordinate(new Figures.Point(100, 600));
+// xAxis.addToCanvas();
+// let yAxis:Axises.YAxis = new Axises.YAxis(400, 10);
+// yAxis.setStartCoordinate(new Figures.Point(100, 600));
+// yAxis.addToCanvas();
+// let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
+// myGrid.draw();
+let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":200, "temp":12}, {"sales":217, "temp":13}]}';
+let chart = new Charts.ScatterChart(new Figures.Point(100, 500));
+chart.addData(data);
+chart.minVal_x = 100;
+chart.minVal_y = 10;
+chart.addToCanvas();
 //# sourceMappingURL=main.js.map

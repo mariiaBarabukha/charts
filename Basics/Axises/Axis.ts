@@ -21,8 +21,8 @@ namespace Axises{
         }
 
         public setStartCoordinate(s:Figures.Point){
-            this.startPoint.x = s.x+Models.Model.margin;
-            this.startPoint.y = s.y-Models.Model.margin;
+            this.startPoint.x = s.x;
+            this.startPoint.y = s.y;
         }
 
         protected abstract calculateFinishPoint():Figures.Point;

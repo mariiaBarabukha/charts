@@ -1,0 +1,20 @@
+{
+    "data":[
+        {
+            "sales":200,
+            "temperature":12
+        },
+        {
+            "sales":300,
+            "temperature":14
+        },
+        {
+            "sales":320,
+            "temperature":16
+        },
+        {
+            "sales":348,
+            "temperature":20
+        }
+    ]
+}
