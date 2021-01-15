@@ -1,4 +1,11 @@
 namespace Grid{
+
+    export enum Grids{
+        Horizontal,
+        Vertical,
+        Combined,
+        None
+    }
     
     export abstract class Grid{
 

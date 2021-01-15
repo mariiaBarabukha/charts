@@ -1,4 +1,6 @@
 namespace Axises{
+
+    
     export abstract class Axis{
         length:number;
         maxVal:number;

@@ -23,6 +23,8 @@ namespace Models{
 
         static margin:number = 30;
 
+        static def_intervals:number = 20;
+
         public static setContext(context: CanvasRenderingContext2D){
             this.context = context;
         }

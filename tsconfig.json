@@ -5,7 +5,10 @@
         "outFile": "main.js",
         "sourceMap": true
     },
-    "files": [   
+    "files": [
+
+        "./Utils/myMath.ts",
+
         "./Model/Model.ts",
 
         "./Basics/Figures/Point.ts",
