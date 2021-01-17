@@ -7,18 +7,10 @@ namespace Grid{
         }
 
         markeTheLines(){
-            for(let i:number = -this.length_y+this.intervals1; i<0; i+=this.intervals1){
-                
-                context.moveTo(0,i);
-                context.lineTo(this.length_x,i);
-              
-            }
-            for(let i:number = this.intervals2; i<= this.length_x - this.intervals2; i+=this.intervals2){
-                
-                context.moveTo(i,0);
-                context.lineTo(i,-this.length_y);
-              
-            }
+            let h_grid = new HorizontalGrid(this.length_x, this.length_y,this.start, this.intervals1);
+            let v_grid = new VerticalGrid(this.length_x, this.length_y,this.start, this.intervals2);
+            h_grid.markeTheLines();
+            v_grid.markeTheLines();
         }
 
 

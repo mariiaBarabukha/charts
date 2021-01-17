@@ -190,14 +190,18 @@ var Grid;
             super(length_x, length_y, start, intervals, intervals2);
         }
         markeTheLines() {
-            for (let i = -this.length_y + this.intervals1; i < 0; i += this.intervals1) {
-                context.moveTo(0, i);
-                context.lineTo(this.length_x, i);
-            }
-            for (let i = this.intervals2; i <= this.length_x - this.intervals2; i += this.intervals2) {
-                context.moveTo(i, 0);
-                context.lineTo(i, -this.length_y);
-            }
+            let h_grid = new Grid.HorizontalGrid(this.length_x, this.length_y, this.start, this.intervals1);
+            let v_grid = new Grid.VerticalGrid(this.length_x, this.length_y, this.start, this.intervals2);
+            h_grid.markeTheLines();
+            v_grid.markeTheLines();
+            // for(let i:number = -this.length_y+this.intervals1; i<0; i+=this.intervals1){
+            //     context.moveTo(0,i);
+            //     context.lineTo(this.length_x,i);
+            // }
+            // for(let i:number = this.intervals2; i<= this.length_x - this.intervals2; i+=this.intervals2){
+            //     context.moveTo(i,0);
+            //     context.lineTo(i,-this.length_y);
+            // }
         }
     }
     Grid.CombinedGrid = CombinedGrid;
@@ -320,7 +324,6 @@ var Charts;
             this.context = Models.Model.getContext();
             this.minVal_x = 0;
             this.minVal_y = 0;
-            this.theGrid = Grid.Grids.Combined;
             this.amountOfElements = 0;
             this.x_data = [];
             this.y_data = [];
@@ -336,26 +339,6 @@ var Charts;
         setScale_y(s) {
             this.scale_y = s;
         }
-        calculateScales() {
-            if (this.maxVal_x - this.minVal_x > this.maxVal_y - this.minVal_y) {
-                this.scale_x = (this.maxVal_x - this.minVal_x) / (this.maxVal_y - this.minVal_y);
-            }
-            else {
-                this.scale_y = (this.maxVal_y - this.minVal_y) / (this.maxVal_x - this.minVal_x);
-            }
-        }
-        calculateIntervals() {
-            this.maxVal_x = Utils.myMath.myRound(this.maxVal_x);
-            this.maxVal_y = Utils.myMath.myRound(this.maxVal_y);
-            this.minVal_x = Utils.myMath.myRound(this.minVal_x);
-            this.minVal_y = Utils.myMath.myRound(this.minVal_y);
-            let digOrMaxX = Utils.myMath.countDigOrder(this.maxVal_x);
-            let digOrMaxY = Utils.myMath.countDigOrder(this.maxVal_y);
-            let digOrMinX = Utils.myMath.countDigOrder(this.minVal_x);
-            let digOrMinY = Utils.myMath.countDigOrder(this.minVal_y);
-            this.interval1 = this.width / (this.maxVal_x - this.minVal_x);
-            this.interval2 = this.height / (this.maxVal_y - this.minVal_y);
-        }
         addToCanvas() {
             let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
             xAxis.setStartCoordinate(this.startPoint);
@@ -363,43 +346,25 @@ var Charts;
             let yAxis = new Axises.YAxis(this.height, this.maxVal_y, this.minVal_y);
             yAxis.setStartCoordinate(this.startPoint);
             yAxis.addToCanvas();
-            this.calculateScales();
-            this.calculateIntervals();
-            this.addGrid();
-            this.addDots();
-        }
-        setGrid(theGrid) {
-            this.theGrid = theGrid;
-        }
-        addGrid() {
-            let myGrid;
-            switch (this.theGrid) {
-                case Grid.Grids.Horizontal: {
-                    myGrid = new Grid.HorizontalGrid(this.width, this.height, this.startPoint, this.scale_x * this.interval2);
-                    break;
-                }
-                case Grid.Grids.Vertical: {
-                    myGrid = new Grid.VerticalGrid(this.width, this.height, this.startPoint, this.scale_y * this.interval1);
-                }
-                case Grid.Grids.None: {
-                    myGrid = null;
-                    break;
-                }
-                case Grid.Grids.Combined: {
-                    myGrid = new Grid.CombinedGrid(this.width, this.height, this.startPoint, this.scale_y * this.interval2, this.scale_x * this.interval1);
-                }
-                default: {
-                    break;
-                }
+            this.int1 = (this.width - Models.Model.margin) / (this.maxVal_x - this.minVal_x);
+            this.int2 = (this.height) / (this.maxVal_y - this.minVal_y);
+            if (this.int1 < 20) {
+                this.setScale_x(20 / this.int1);
             }
+            if (this.int2 < 20) {
+                this.setScale_y(20 / this.int2);
+            }
+            let myGrid = new Grid.CombinedGrid(xAxis.length, yAxis.length, this.startPoint, this.int1 * this.scale_x, this.int2 * this.scale_y);
+            myGrid.setGridLineWidth(1);
             myGrid.draw();
+            this.addDots();
         }
         addDots() {
             context.save();
-            console.log(this.interval1, this.interval2);
+            console.log(this.int1, this.int2);
             context.translate(this.startPoint.x, this.startPoint.y);
             for (let i = 0; i < this.amountOfElements; i++) {
-                let d = new Figures.Dot(new Figures.Point((this.x_data[i]) * (this.width / this.maxVal_x), -(this.y_data[i]) * (this.height / this.maxVal_y)));
+                let d = new Figures.Dot(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1, -(this.y_data[i] - this.minVal_y) * this.int2));
                 d.draw();
             }
             context.restore();
