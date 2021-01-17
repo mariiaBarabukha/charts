@@ -7,8 +7,8 @@ namespace Grid{
         }
 
         markeTheLines(){
-            let h_grid = new HorizontalGrid(this.length_x, this.length_y,this.start, this.intervals1);
-            let v_grid = new VerticalGrid(this.length_x, this.length_y,this.start, this.intervals2);
+            let h_grid = new HorizontalGrid(this.length_x, this.length_y,this.start, this.intervals2);
+            let v_grid = new VerticalGrid(this.length_x, this.length_y,this.start, this.intervals1);
             h_grid.markeTheLines();
             v_grid.markeTheLines();
         }

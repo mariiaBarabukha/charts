@@ -7,7 +7,7 @@ namespace Grid{
         }
 
         public markeTheLines(){
-            for(let i:number = -this.length_y+this.intervals1; i<0; i+=this.intervals1){
+            for(let i:number = 0; i>-this.length_y+this.intervals1; i-=this.intervals1){
                 
                 context.moveTo(0,i);
                 context.lineTo(this.length_x,i);

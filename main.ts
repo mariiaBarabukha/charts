@@ -14,12 +14,14 @@ Models.Model.canvas = canvas;
 // let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
 // myGrid.draw();
 
-let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":200, "temp":12}, {"sales":217, "temp":13}]}';
+let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":-1}, {"sales":217, "temp":13}, {"sales":110, "temp":10}]}';
 
 let chart = new Charts.ScatterChart(new Figures.Point(100,500));
 chart.addData(data);
-chart.minVal_x = 100;
-chart.minVal_y = 10;
+context.save();            
+            
+//chart.minVal_x = 100;
+//chart.minVal_y = 10;
 chart.addToCanvas();
 
 
