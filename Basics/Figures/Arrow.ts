@@ -16,9 +16,9 @@ namespace Figures{
         }
 
         private findAngle(start:Point, finish:Point){
-            console.log(start.x, start.y, finish.x, finish.y);
+           //console.log(start.x, start.y, finish.x, finish.y);
             let l = Math.sqrt(Math.pow(start.x - finish.x, 2)+Math.pow(start.y - finish.y, 2));  
-            console.log(l);          
+            //console.log(l);          
             return Math.asin((start.x - finish.x)/l);
         }
     }

@@ -4,6 +4,7 @@ namespace Figures{
 
         draw(start:Point, finish: Point, lineWidth: number = Models.Model.def_lineWidth,
              color:string = Models.Model.def_color){
+            console.log(start,finish);     
             context.save();
             context.beginPath();
             context.moveTo(start.x, start.y);

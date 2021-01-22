@@ -14,14 +14,18 @@ Models.Model.canvas = canvas;
 // let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
 // myGrid.draw();
 
-let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":-1}, {"sales":217, "temp":13}, {"sales":110, "temp":10}]}';
+let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
 
-let chart = new Charts.ScatterChart(new Figures.Point(100,500));
-chart.addData(data);
-context.save();            
+// let chart = new Charts.ScatterChart(new Figures.Point(100,500));
+// chart.addData(data);
+// context.save();            
             
-//chart.minVal_x = 100;
-//chart.minVal_y = 10;
-chart.addToCanvas();
+// //chart.minVal_x = 100;
+// //chart.minVal_y = 10;
+// chart.setGrid(Grid.Grids.Combined);
+// chart.addToCanvas();
 
+let zhopa = new Charts.LineChart(new Figures.Point(100,500));
+zhopa.addData(data);
+zhopa.addToCanvas();
 

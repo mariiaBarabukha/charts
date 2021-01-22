@@ -33,6 +33,61 @@ var Utils;
     }
     Utils.myMath = myMath;
 })(Utils || (Utils = {}));
+var Utils;
+(function (Utils) {
+    class JSONparser {
+        static parse(dataJSON) {
+            let data = JSON.parse(dataJSON);
+            this.data = data["data"];
+            //console.log(this.data);
+            this.description = data["description"];
+            this.amountOfElements = this.data.length;
+            for (let i = 0; i < this.amountOfElements; i++) {
+                this.x_data[i] = (this.data[i])[this.description["x"]];
+                this.y_data[i] = (this.data[i])[this.description["y"]];
+            }
+            console.log(this.x_data, this.y_data, this.x_data.length);
+        }
+    }
+    JSONparser.amountOfElements = 0;
+    JSONparser.x_data = [];
+    JSONparser.y_data = [];
+    Utils.JSONparser = JSONparser;
+})(Utils || (Utils = {}));
+var Utils;
+(function (Utils) {
+    class Sorter {
+        static sortAsc_linechart(x_data, y_data) {
+            this.partition(x_data, y_data, 0, x_data.length - 1);
+        }
+        static partition(items, y, left, right) {
+            let pivot = items[Math.floor((right + left) / 2)], i = left, j = right;
+            while (i <= j) {
+                while (items[i] < pivot) {
+                    i++;
+                }
+                while (items[j] > pivot) {
+                    j--;
+                }
+                if (i <= j) {
+                    this.swap(items, y, i, j);
+                    i++;
+                    j--;
+                }
+            }
+            return i;
+        }
+        static swap(items, y, firstIndex, secondIndex) {
+            let temp = items[firstIndex];
+            items[firstIndex] = items[secondIndex];
+            items[secondIndex] = temp;
+            temp = y[firstIndex];
+            y[firstIndex] = y[secondIndex];
+            y[secondIndex] = temp;
+        }
+    }
+    Utils.Sorter = Sorter;
+})(Utils || (Utils = {}));
 var Models;
 (function (Models) {
     class Model {
@@ -76,6 +131,7 @@ var Figures;
             this.context = Models.Model.getContext();
         }
         draw(start, finish, lineWidth = Models.Model.def_lineWidth, color = Models.Model.def_color) {
+            console.log(start, finish);
             context.save();
             context.beginPath();
             context.moveTo(start.x, start.y);
@@ -94,7 +150,7 @@ var Figures;
         constructor(p, color = "red") {
             this.context = Models.Model.getContext();
             this.radius = 3;
-            console.log(p);
+            // console.log(p);
             this.p = p;
             this.color = color;
         }
@@ -210,9 +266,9 @@ var Figures;
             this.arrowhead.draw(color, angle);
         }
         findAngle(start, finish) {
-            console.log(start.x, start.y, finish.x, finish.y);
+            //console.log(start.x, start.y, finish.x, finish.y);
             let l = Math.sqrt(Math.pow(start.x - finish.x, 2) + Math.pow(start.y - finish.y, 2));
-            console.log(l);
+            //console.log(l);          
             return Math.asin((start.x - finish.x) / l);
         }
     }
@@ -311,7 +367,7 @@ var Axises;
 })(Axises || (Axises = {}));
 var Charts;
 (function (Charts) {
-    class ScatterChart {
+    class Chart {
         constructor(startPoint, width = 300, height = 300) {
             this.context = Models.Model.getContext();
             this.minVal_x = 0;
@@ -319,6 +375,7 @@ var Charts;
             this.amountOfElements = 0;
             this.x_data = [];
             this.y_data = [];
+            this.theGrid = Grid.Grids.Combined;
             this.scale_x = 1;
             this.scale_y = 1;
             this.startPoint = new Figures.Point(startPoint.x + Models.Model.margin, startPoint.y + Models.Model.margin);
@@ -331,53 +388,15 @@ var Charts;
         setScale_y(s) {
             this.scale_y = s;
         }
-        addToCanvas() {
-            let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
-            xAxis.setStartCoordinate(this.startPoint);
-            xAxis.addToCanvas();
-            let yAxis = new Axises.YAxis(this.height, this.maxVal_y, this.minVal_y);
-            yAxis.setStartCoordinate(this.startPoint);
-            yAxis.addToCanvas();
-            // this.int1 = (this.width - Models.Model.margin)/(this.maxVal_x-this.minVal_x);
-            // this.int2 = (this.height)/(this.maxVal_y-this.minVal_y);
-            // if( this.int1 < 20){
-            //     this.setScale_x(20/ this.int1);
-            // }
-            // if( this.int2 < 20){
-            //     this.setScale_y(20/ this.int2);   // }
-            this.c_x = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_x - this.minVal_x) - 2);
-            this.c_y = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_y - this.minVal_y) - 2);
-            this.a_x = (this.maxVal_x - this.minVal_x) / this.c_x;
-            this.a_y = (this.maxVal_y - this.minVal_y) / this.c_y;
-            this.int1 = this.width / this.a_x;
-            this.int2 = this.height / this.a_y;
-            //console.log(c_x,c_y, a_x,a_y,this.int1,this.int2);
-            let myGrid = new Grid.CombinedGrid(xAxis.length, yAxis.length, this.startPoint, this.int1, this.int2);
-            myGrid.setGridLineWidth(1);
-            myGrid.draw();
-            this.addDots();
-        }
-        addDots() {
-            context.save();
-            console.log(-(this.y_data[0] - this.minVal_y) * this.int2 / this.c_y, this.y_data[0], this.int2, this.c_y);
-            for (let i = 0; i < this.amountOfElements; i++) {
-                console.log(this.x_data[i] * this.int1 / this.c_x);
-                let d = new Figures.Dot(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y));
-                d.draw();
-            }
-            context.restore();
-        }
         addData(dataJSON) {
             //add parser.ts
-            let data = JSON.parse(dataJSON);
-            this.data = data["data"];
-            this.description = data["description"];
-            this.amountOfElements = this.data.length;
-            for (let i = 0; i < this.amountOfElements; i++) {
-                this.x_data[i] = (this.data[i])[this.description["x"]];
-                this.y_data[i] = (this.data[i])[this.description["y"]];
-            }
-            console.log(typeof (typeof this.x_data[0]));
+            Utils.JSONparser.parse(dataJSON);
+            this.data = Utils.JSONparser.data;
+            this.description = Utils.JSONparser.description;
+            this.x_data = Utils.JSONparser.x_data;
+            this.y_data = Utils.JSONparser.y_data;
+            this.amountOfElements = Utils.JSONparser.amountOfElements;
+            // console.log(typeof(typeof this.x_data[0]));
             this.maxVal_x = (typeof this.x_data[0] == "string") ? this.amountOfElements :
                 Utils.myMath.myRound(this.max(this.x_data));
             this.maxVal_y = Utils.myMath.myRound(this.maxVal_y);
@@ -385,7 +404,7 @@ var Charts;
                 Utils.myMath.myRound(this.max(this.y_data));
             this.minVal_x = (typeof this.x_data[0] == "string") ? 0 : (this.min(this.x_data) < 0 ? this.min(this.x_data) : 0);
             this.minVal_y = (typeof this.y_data[0] == "string") ? 0 : (this.min(this.y_data) < 0 ? this.min(this.y_data) : 0);
-            console.log(this.maxVal_x, this.maxVal_y);
+            // console.log(this.maxVal_x, this.maxVal_y);
         }
         max(d) {
             // let n = this.x_data.map(x => Number.parseInt(x));
@@ -407,8 +426,99 @@ var Charts;
             }
             return m;
         }
+        setGrid(theGrid) {
+            this.theGrid = theGrid;
+        }
+        addGrid() {
+            let myGrid;
+            switch (this.theGrid) {
+                case Grid.Grids.Horizontal: {
+                    myGrid = new Grid.HorizontalGrid(this.width, this.height, this.startPoint, this.int2);
+                    myGrid.draw();
+                    break;
+                }
+                case Grid.Grids.Vertical: {
+                    myGrid = new Grid.VerticalGrid(this.width, this.height, this.startPoint, this.int1);
+                    myGrid.draw();
+                }
+                case Grid.Grids.None: {
+                    myGrid = null;
+                    break;
+                }
+                case Grid.Grids.Combined: {
+                    myGrid = new Grid.CombinedGrid(this.width, this.height, this.startPoint, this.int1, this.int2);
+                    myGrid.draw();
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+    Charts.Chart = Chart;
+})(Charts || (Charts = {}));
+var Charts;
+(function (Charts) {
+    class ScatterChart extends Charts.Chart {
+        constructor(startPoint, width = 300, height = 300) {
+            super(startPoint, width, height);
+        }
+        addToCanvas() {
+            let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
+            xAxis.setStartCoordinate(this.startPoint);
+            xAxis.addToCanvas();
+            let yAxis = new Axises.YAxis(this.height, this.maxVal_y, this.minVal_y);
+            yAxis.setStartCoordinate(this.startPoint);
+            yAxis.addToCanvas();
+            this.c_x = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_x - this.minVal_x) - 2);
+            this.c_y = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_y - this.minVal_y) - 2);
+            this.a_x = (this.maxVal_x - this.minVal_x) / this.c_x;
+            this.a_y = (this.maxVal_y - this.minVal_y) / this.c_y;
+            this.int1 = this.width / this.a_x;
+            this.int2 = this.height / this.a_y;
+            this.addGrid();
+            this.addDots();
+        }
+        addDots() {
+            context.save();
+            console.log(-(this.y_data[0] - this.minVal_y) * this.int2 / this.c_y, this.y_data[0], this.int2, this.c_y);
+            for (let i = 0; i < this.amountOfElements; i++) {
+                //console.log(this.x_data[i]*this.int1/this.c_x);
+                let d = new Figures.Dot(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y));
+                d.draw();
+            }
+            context.restore();
+        }
     }
     Charts.ScatterChart = ScatterChart;
+})(Charts || (Charts = {}));
+var Charts;
+(function (Charts) {
+    class LineChart extends Charts.ScatterChart {
+        addToCanvas() {
+            super.addToCanvas();
+            this.addLines();
+        }
+        addLines() {
+            Utils.Sorter.sortAsc_linechart(this.x_data, this.y_data);
+            console.log(this.x_data, this.y_data);
+            for (let i = 0; i < this.amountOfElements - 1; i++) {
+                this.drawLine(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), new Figures.Point((this.x_data[i + 1] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i + 1] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), 3, 'red');
+            }
+        }
+        drawLine(start, finish, lineWidth, color) {
+            console.log(start, finish);
+            context.save();
+            context.beginPath();
+            context.moveTo(start.x, start.y);
+            context.lineTo(finish.x, finish.y);
+            context.lineWidth = lineWidth;
+            context.strokeStyle = color;
+            context.stroke();
+            context.restore();
+        }
+    }
+    Charts.LineChart = LineChart;
 })(Charts || (Charts = {}));
 const canvas = document.getElementById('chart');
 const context = canvas.getContext('2d');
@@ -422,11 +532,15 @@ Models.Model.canvas = canvas;
 // yAxis.addToCanvas();
 // let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
 // myGrid.draw();
-let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":-1}, {"sales":217, "temp":13}, {"sales":110, "temp":10}]}';
-let chart = new Charts.ScatterChart(new Figures.Point(100, 500));
-chart.addData(data);
-context.save();
-//chart.minVal_x = 100;
-//chart.minVal_y = 10;
-chart.addToCanvas();
+let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
+// let chart = new Charts.ScatterChart(new Figures.Point(100,500));
+// chart.addData(data);
+// context.save();            
+// //chart.minVal_x = 100;
+// //chart.minVal_y = 10;
+// chart.setGrid(Grid.Grids.Combined);
+// chart.addToCanvas();
+let zhopa = new Charts.LineChart(new Figures.Point(100, 500));
+zhopa.addData(data);
+zhopa.addToCanvas();
 //# sourceMappingURL=main.js.map

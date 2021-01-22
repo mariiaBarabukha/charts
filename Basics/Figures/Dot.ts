@@ -5,7 +5,7 @@ namespace Figures{
         color:string;
         radius:number = 3;
         constructor(p: Figures.Point, color:string = "red"){
-            console.log(p);
+           // console.log(p);
             this.p = p;
             this.color = color;
         }
