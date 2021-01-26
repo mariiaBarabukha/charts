@@ -24,8 +24,8 @@ namespace Grid{
             this.intervals1 = intervals1;
             this.intervals2 = intervals2;
             this.start = start;
-            console.log(this)
-            console.log(this.start)
+           // console.log(this)
+            //console.log(this.start)
         }
 
 

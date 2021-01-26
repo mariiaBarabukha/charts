@@ -6,8 +6,8 @@ namespace Figures{
         arrowhead: ArrowHeads.ArrowHead;
         
 
-        constructor(start:Point, finish:Point, arrowHead:ArrowHeads.ArrowHead, color:string = Models.Model.def_color,
-             lineWidth = Models.Model.def_lineWidth){
+        constructor(start:Point, finish:Point, arrowHead:ArrowHeads.ArrowHead, color:string = Parameters.Parameters.def_color,
+             lineWidth = Parameters.Parameters.def_lineWidth){
             this.basis = new MyLine();
             this.basis.draw(start,finish, lineWidth,color);            
             this.arrowhead = arrowHead;

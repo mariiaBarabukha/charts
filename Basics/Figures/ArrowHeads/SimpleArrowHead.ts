@@ -6,7 +6,8 @@ namespace Figures.ArrowHeads{
            
         }
 
-        public draw(color: string = Models.Model.def_color, angle:number, lineWidth:number = Models.Model.def_lineWidth){
+        public draw(color: string = Parameters.Parameters.def_color, angle:number,
+             lineWidth:number = Parameters.Parameters.def_lineWidth){
             context.save();
             context.beginPath();
             context.translate(this.start.x, this.start.y);

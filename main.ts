@@ -15,6 +15,7 @@ Models.Model.canvas = canvas;
 // myGrid.draw();
 
 let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
+let data1 = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":209, "temp":18}, {"sales":10, "temp":1},{"sales":150, "temp":13}, {"sales":110, "temp":15}]}';
 
 // let chart = new Charts.ScatterChart(new Figures.Point(100,500));
 // chart.addData(data);
@@ -27,5 +28,5 @@ let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp"
 
 let zhopa = new Charts.LineChart(new Figures.Point(100,500));
 zhopa.addData(data);
+zhopa.addData(data1);
 zhopa.addToCanvas();
-

@@ -10,8 +10,11 @@
         "./Utils/myMath.ts",
         "./Utils/JSONParser.ts",
         "./Utils/Sorter.ts",
+        "./Utils/ColorGenerator.ts",
 
         "./Model/Model.ts",
+        "./Model/DataManager.ts",
+        "./Model/Parameters.ts",        
 
         "./Basics/Figures/Point.ts",
         "./Basics/Figures/MyLine.ts",

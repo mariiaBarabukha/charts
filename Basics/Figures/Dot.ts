@@ -11,7 +11,7 @@ namespace Figures{
         }
 
         public setRadius(r:number){
-            this.radius =r;
+            this.radius = r;
         }
 
         public getRadius(){

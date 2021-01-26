@@ -2,17 +2,21 @@ namespace Charts{
     export class LineChart extends ScatterChart{
        addToCanvas(){
            super.addToCanvas();
-           this.addLines();
+           for(let i:number = 0; i < this.all_x_data.length; i++){
+                this.addLines(i);
+           }
        }     
        
-       private addLines(){
-           Utils.Sorter.sortAsc_linechart(this.x_data, this.y_data);
+       colorGenerator = new Utils.ColorGenerator();
+       private addLines(n:number){
+           Utils.Sorter.sortAsc_linechart(this.all_x_data[n], this.all_y_data[n]);
            console.log(this.x_data,this.y_data);
-            for(let i:number = 0; i < this.amountOfElements-1; i++){
-                this.drawLine(new Figures.Point((this.x_data[i] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
-                -(this.y_data[i] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y), 
-                new Figures.Point((this.x_data[i+1] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
-                -(this.y_data[i+1] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y),3,'red');
+           let color = this.colorGenerator.next();
+            for(let i:number = 0; i < this.all_x_data[n].length; i++){
+                this.drawLine(new Figures.Point((this.all_x_data[n][i] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
+                -(this.all_y_data[n][i] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y), 
+                new Figures.Point((this.all_x_data[n][i+1] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
+                -(this.all_y_data[n][i+1] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y),3,color);
             }
        }
 

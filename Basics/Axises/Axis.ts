@@ -19,7 +19,7 @@ namespace Axises{
         }
 
         public setMargin(m:number){
-            Models.Model.margin = m;
+            Parameters.Parameters.margin = m;
         }
 
         public setStartCoordinate(s:Figures.Point){
@@ -33,7 +33,8 @@ namespace Axises{
             console.log(this.length);
             this.finishPoint = this.calculateFinishPoint();
             let a: Figures.Arrow = new Figures.Arrow(this.startPoint, this.finishPoint, 
-            new Figures.ArrowHeads.SimpleArrowHead(this.finishPoint, Models.Model.def_arrowHeadWidth, Models.Model.def_arrowHeadHeight));
+            new Figures.ArrowHeads.SimpleArrowHead(this.finishPoint, Parameters.Parameters.def_arrowHeadWidth,
+                 Parameters.Parameters.def_arrowHeadHeight));
             
         }
     }

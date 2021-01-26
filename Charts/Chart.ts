@@ -27,8 +27,12 @@ namespace Charts{
 
         scale_x:number = 1;
         scale_y:number = 1;
+        
+
+        all_x_data:Array<Array<any>> = [];
+        all_y_data:Array<Array<any>> = [];
         constructor(startPoint:Figures.Point, width:number = 300, height:number = 300){
-            this.startPoint = new Figures.Point(startPoint.x+Models.Model.margin, startPoint.y+Models.Model.margin);
+            this.startPoint = new Figures.Point(startPoint.x+Parameters.Parameters.margin, startPoint.y+Parameters.Parameters.margin);
             this.width = width;
             this.height = height;
         }
@@ -50,7 +54,92 @@ namespace Charts{
         a_y:number;
 
         public abstract addToCanvas();
+
+        protected find_minVal(){          
+
+            let min_x = 0;          
+            let min_y = 0;
+           
+            if(typeof this.x_data[0] == "string"){
+                this.minVal_x = 0;
+            }else{
+                for(let i:number = 0; i < this.all_x_data.length; i++){
+                    let a = this.min(this.all_x_data[i]);
+                    if(a < min_x){
+                        min_x = a;
+                    }
+                }
+
+                this.minVal_x = min_x;
+            }
+
+            if(typeof this.y_data[0] == "string"){
+                this.minVal_y = 0;
+            }else{
+                for(let i:number = 0; i < this.all_y_data.length; i++){
+                    let a = this.min(this.all_y_data[i]);
+                    if(a < min_x){
+                        min_y = a;
+                    }
+                }
+
+                this.minVal_y = min_y;
+            }
+            
+            // this.minVal_x = (typeof this.x_data[0] == "string") ? 0 : (this.min(this.all_x_data) < 0 ? this.min(this.all_x_data) : 0);
+            // this.minVal_y = (typeof this.y_data[0] == "string") ? 0 : (this.min(this.all_y_data) < 0 ? this.min(this.all_y_data) : 0);
+
+        }
+
+        protected find_maxVal(){
+
+            let max_x = this.max(this.all_x_data[0]);
+            let max_y = this.max(this.all_y_data[0]);
+
+            if(typeof this.x_data[0] == "string"){
+                this.minVal_x = 0;
+            }else{
+                for(let i:number = 1; i < this.all_x_data.length; i++){
+                    let a = this.max(this.all_x_data[i]);
+                    if(a > max_x){
+                        max_x = a;
+                    }
+                }
+                console.log(max_x);
+
+                this.maxVal_x = Utils.myMath.myRound(max_x);
+            }
+
+            if(typeof this.y_data[0] == "string"){
+                this.minVal_y = 0;
+            }else{
+                for(let i:number = 1; i < this.all_y_data.length; i++){
+                    let a = this.max(this.all_y_data[i]);
+                    if(a > max_y){
+                        max_y = a;
+                    }
+                }
+                console.log(max_y);
+
+                this.maxVal_y = Utils.myMath.myRound(max_y);
+            }
+
+            // this.maxVal_x = (typeof this.all_x_data[0] == "string") ? this.amountOfElements : 
+            //     Utils.myMath.myRound(this.max(this.all_x_data));
+            // this.maxVal_y = Utils.myMath.myRound(this.maxVal_y)
+            // this.maxVal_y = (typeof this.all_y_data[0] == "string") ? this.amountOfElements :  
+            // Utils.myMath.myRound(this.max(this.all_y_data));
+
+        }
         
+
+        private arrayCopy(a:Array<any>){
+            let res:Array<any> = [];
+            for(let i:number = 0; i < a.length; i++){
+                res[i] = a[i];
+            }
+            return res;
+        }
 
         public addData(dataJSON:string){
             //add parser.ts
@@ -58,23 +147,25 @@ namespace Charts{
             this.data = Utils.JSONparser.data;
             this.description = Utils.JSONparser.description;
 
+        
             this.x_data =  Utils.JSONparser.x_data;
             this.y_data =  Utils.JSONparser.y_data;
 
+          
+
             this.amountOfElements = Utils.JSONparser.amountOfElements;
+            console.log(this.all_x_data);
+
+            //let all_len = this.all_x_data;
+            this.all_x_data.push(this.arrayCopy(this.x_data));
+            this.all_y_data.push(this.arrayCopy(this.y_data));
+            
+            console.log(this.all_x_data);
+
+          // console.log(this.all_x_data,this.all_y_data);
 
 
            // console.log(typeof(typeof this.x_data[0]));
-
-            this.maxVal_x = (typeof this.x_data[0] == "string") ? this.amountOfElements : 
-                Utils.myMath.myRound(this.max(this.x_data));
-            this.maxVal_y = Utils.myMath.myRound(this.maxVal_y)
-            this.maxVal_y = (typeof this.y_data[0] == "string") ? this.amountOfElements :  
-            Utils.myMath.myRound(this.max(this.y_data));
-
-            this.minVal_x = (typeof this.x_data[0] == "string") ? 0 : (this.min(this.x_data) < 0 ? this.min(this.x_data) : 0);
-            this.minVal_y = (typeof this.y_data[0] == "string") ? 0 : (this.min(this.y_data) < 0 ? this.min(this.y_data) : 0);
-
            // console.log(this.maxVal_x, this.maxVal_y);
         }   
         

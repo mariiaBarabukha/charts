@@ -46,7 +46,7 @@ var Utils;
                 this.x_data[i] = (this.data[i])[this.description["x"]];
                 this.y_data[i] = (this.data[i])[this.description["y"]];
             }
-            console.log(this.x_data, this.y_data, this.x_data.length);
+            //console.log(this.x_data, this.y_data, this.x_data.length);
         }
     }
     JSONparser.amountOfElements = 0;
@@ -57,11 +57,10 @@ var Utils;
 var Utils;
 (function (Utils) {
     class Sorter {
-        static sortAsc_linechart(x_data, y_data) {
-            this.partition(x_data, y_data, 0, x_data.length - 1);
-        }
         static partition(items, y, left, right) {
-            let pivot = items[Math.floor((right + left) / 2)], i = left, j = right;
+            var pivot = items[Math.floor((right + left) / 2)], //middle element
+            i = left, //left pointer
+            j = right; //right pointer
             while (i <= j) {
                 while (items[i] < pivot) {
                     i++;
@@ -70,13 +69,49 @@ var Utils;
                     j--;
                 }
                 if (i <= j) {
-                    this.swap(items, y, i, j);
+                    this.swap(items, y, i, j); //sawpping two elements
                     i++;
                     j--;
                 }
             }
             return i;
         }
+        static quickSort(items, y, left, right) {
+            var index;
+            if (items.length > 1) {
+                index = this.partition(items, y, left, right); //index returned from partition
+                if (left < index - 1) { //more elements on the left side of the pivot
+                    this.quickSort(items, y, left, index - 1);
+                }
+                if (index < right) { //more elements on the right side of the pivot
+                    this.quickSort(items, y, index, right);
+                }
+            }
+            return items;
+        }
+        static sortAsc_linechart(items, y_data) {
+            this.quickSort(items, y_data, 0, items.length - 1);
+        }
+        //     private static partition(items:Array<any>, y:Array<any>, 
+        //         left:number, right:number) {
+        //         let pivot   = items[Math.floor((right + left) / 2)],
+        //             i       = left,
+        //             j       = right;
+        //         while (i <= j) {
+        //             while (items[i] < pivot) {
+        //                 i++;
+        //             }
+        //             while (items[j] > pivot) {
+        //                 j--;
+        //             }
+        //             if (i <= j) {
+        //                 this.swap(items, y, i, j);
+        //                 i++;
+        //                 j--;
+        //             }
+        //         }
+        //         return i;
+        //     }
         static swap(items, y, firstIndex, secondIndex) {
             let temp = items[firstIndex];
             items[firstIndex] = items[secondIndex];
@@ -87,6 +122,33 @@ var Utils;
         }
     }
     Utils.Sorter = Sorter;
+})(Utils || (Utils = {}));
+var Utils;
+(function (Utils) {
+    class ColorGenerator {
+        constructor() {
+            this.currentColor = 0;
+            this.colors = [0xFF0000, 0x0000FF, 0x00FF00, 0xFFFF00, 0xFF00FF];
+            this.counter = 0;
+        }
+        next() {
+            if (this.currentColor == 0) {
+                this.currentColor = 0xFF0000;
+            }
+            else {
+                this.counter++;
+                if (this.counter >= this.colors.length - 1) {
+                    this.counter = this.counter % 5;
+                    this.colors.forEach(c => {
+                        c /= 2;
+                    });
+                }
+                this.currentColor = this.colors[this.counter];
+            }
+            return "#" + this.currentColor;
+        }
+    }
+    Utils.ColorGenerator = ColorGenerator;
 })(Utils || (Utils = {}));
 var Models;
 (function (Models) {
@@ -106,14 +168,33 @@ var Models;
             return this.context;
         }
     }
-    Model.def_lineWidth = 2;
-    Model.def_color = "black";
-    Model.def_arrowHeadWidth = 5;
-    Model.def_arrowHeadHeight = 10;
-    Model.margin = 30;
-    Model.def_intervals = 20;
     Models.Model = Model;
 })(Models || (Models = {}));
+var ChartData;
+(function (ChartData) {
+    class Data {
+        constructor(filename) {
+            this.filename = filename;
+        }
+        readJSON() {
+            let file = new FileReader();
+            //this.text = file.readAsText(new File());
+        }
+    }
+    ChartData.Data = Data;
+})(ChartData || (ChartData = {}));
+var Parameters;
+(function (Parameters_1) {
+    class Parameters {
+    }
+    Parameters.def_lineWidth = 2;
+    Parameters.def_color = "black";
+    Parameters.def_arrowHeadWidth = 5;
+    Parameters.def_arrowHeadHeight = 10;
+    Parameters.margin = 30;
+    Parameters.def_intervals = 20;
+    Parameters_1.Parameters = Parameters;
+})(Parameters || (Parameters = {}));
 var Figures;
 (function (Figures) {
     class Point {
@@ -130,7 +211,7 @@ var Figures;
         constructor() {
             this.context = Models.Model.getContext();
         }
-        draw(start, finish, lineWidth = Models.Model.def_lineWidth, color = Models.Model.def_color) {
+        draw(start, finish, lineWidth = Parameters.Parameters.def_lineWidth, color = Parameters.Parameters.def_color) {
             console.log(start, finish);
             context.save();
             context.beginPath();
@@ -188,8 +269,8 @@ var Grid;
             this.intervals1 = intervals1;
             this.intervals2 = intervals2;
             this.start = start;
-            console.log(this);
-            console.log(this.start);
+            // console.log(this)
+            //console.log(this.start)
         }
         setGridLineWidth(w) {
             this.lineWidth = w;
@@ -257,7 +338,7 @@ var Grid;
 var Figures;
 (function (Figures) {
     class Arrow {
-        constructor(start, finish, arrowHead, color = Models.Model.def_color, lineWidth = Models.Model.def_lineWidth) {
+        constructor(start, finish, arrowHead, color = Parameters.Parameters.def_color, lineWidth = Parameters.Parameters.def_lineWidth) {
             this.context = Models.Model.getContext();
             this.basis = new Figures.MyLine();
             this.basis.draw(start, finish, lineWidth, color);
@@ -297,7 +378,7 @@ var Figures;
                 super(start, width, height);
                 this.context = Models.Model.getContext();
             }
-            draw(color = Models.Model.def_color, angle, lineWidth = Models.Model.def_lineWidth) {
+            draw(color = Parameters.Parameters.def_color, angle, lineWidth = Parameters.Parameters.def_lineWidth) {
                 context.save();
                 context.beginPath();
                 context.translate(this.start.x, this.start.y);
@@ -327,7 +408,7 @@ var Axises;
             this.minVal = minVal;
         }
         setMargin(m) {
-            Models.Model.margin = m;
+            Parameters.Parameters.margin = m;
         }
         setStartCoordinate(s) {
             this.startPoint.x = s.x;
@@ -336,7 +417,7 @@ var Axises;
         addToCanvas() {
             console.log(this.length);
             this.finishPoint = this.calculateFinishPoint();
-            let a = new Figures.Arrow(this.startPoint, this.finishPoint, new Figures.ArrowHeads.SimpleArrowHead(this.finishPoint, Models.Model.def_arrowHeadWidth, Models.Model.def_arrowHeadHeight));
+            let a = new Figures.Arrow(this.startPoint, this.finishPoint, new Figures.ArrowHeads.SimpleArrowHead(this.finishPoint, Parameters.Parameters.def_arrowHeadWidth, Parameters.Parameters.def_arrowHeadHeight));
         }
     }
     Axises.Axis = Axis;
@@ -378,7 +459,9 @@ var Charts;
             this.theGrid = Grid.Grids.Combined;
             this.scale_x = 1;
             this.scale_y = 1;
-            this.startPoint = new Figures.Point(startPoint.x + Models.Model.margin, startPoint.y + Models.Model.margin);
+            this.all_x_data = [];
+            this.all_y_data = [];
+            this.startPoint = new Figures.Point(startPoint.x + Parameters.Parameters.margin, startPoint.y + Parameters.Parameters.margin);
             this.width = width;
             this.height = height;
         }
@@ -388,6 +471,78 @@ var Charts;
         setScale_y(s) {
             this.scale_y = s;
         }
+        find_minVal() {
+            let min_x = 0;
+            let min_y = 0;
+            if (typeof this.x_data[0] == "string") {
+                this.minVal_x = 0;
+            }
+            else {
+                for (let i = 0; i < this.all_x_data.length; i++) {
+                    let a = this.min(this.all_x_data[i]);
+                    if (a < min_x) {
+                        min_x = a;
+                    }
+                }
+                this.minVal_x = min_x;
+            }
+            if (typeof this.y_data[0] == "string") {
+                this.minVal_y = 0;
+            }
+            else {
+                for (let i = 0; i < this.all_y_data.length; i++) {
+                    let a = this.min(this.all_y_data[i]);
+                    if (a < min_x) {
+                        min_y = a;
+                    }
+                }
+                this.minVal_y = min_y;
+            }
+            // this.minVal_x = (typeof this.x_data[0] == "string") ? 0 : (this.min(this.all_x_data) < 0 ? this.min(this.all_x_data) : 0);
+            // this.minVal_y = (typeof this.y_data[0] == "string") ? 0 : (this.min(this.all_y_data) < 0 ? this.min(this.all_y_data) : 0);
+        }
+        find_maxVal() {
+            let max_x = this.max(this.all_x_data[0]);
+            let max_y = this.max(this.all_y_data[0]);
+            if (typeof this.x_data[0] == "string") {
+                this.minVal_x = 0;
+            }
+            else {
+                for (let i = 1; i < this.all_x_data.length; i++) {
+                    let a = this.max(this.all_x_data[i]);
+                    if (a > max_x) {
+                        max_x = a;
+                    }
+                }
+                console.log(max_x);
+                this.maxVal_x = Utils.myMath.myRound(max_x);
+            }
+            if (typeof this.y_data[0] == "string") {
+                this.minVal_y = 0;
+            }
+            else {
+                for (let i = 1; i < this.all_y_data.length; i++) {
+                    let a = this.max(this.all_y_data[i]);
+                    if (a > max_y) {
+                        max_y = a;
+                    }
+                }
+                console.log(max_y);
+                this.maxVal_y = Utils.myMath.myRound(max_y);
+            }
+            // this.maxVal_x = (typeof this.all_x_data[0] == "string") ? this.amountOfElements : 
+            //     Utils.myMath.myRound(this.max(this.all_x_data));
+            // this.maxVal_y = Utils.myMath.myRound(this.maxVal_y)
+            // this.maxVal_y = (typeof this.all_y_data[0] == "string") ? this.amountOfElements :  
+            // Utils.myMath.myRound(this.max(this.all_y_data));
+        }
+        arrayCopy(a) {
+            let res = [];
+            for (let i = 0; i < a.length; i++) {
+                res[i] = a[i];
+            }
+            return res;
+        }
         addData(dataJSON) {
             //add parser.ts
             Utils.JSONparser.parse(dataJSON);
@@ -396,14 +551,13 @@ var Charts;
             this.x_data = Utils.JSONparser.x_data;
             this.y_data = Utils.JSONparser.y_data;
             this.amountOfElements = Utils.JSONparser.amountOfElements;
+            console.log(this.all_x_data);
+            //let all_len = this.all_x_data;
+            this.all_x_data.push(this.arrayCopy(this.x_data));
+            this.all_y_data.push(this.arrayCopy(this.y_data));
+            console.log(this.all_x_data);
+            // console.log(this.all_x_data,this.all_y_data);
             // console.log(typeof(typeof this.x_data[0]));
-            this.maxVal_x = (typeof this.x_data[0] == "string") ? this.amountOfElements :
-                Utils.myMath.myRound(this.max(this.x_data));
-            this.maxVal_y = Utils.myMath.myRound(this.maxVal_y);
-            this.maxVal_y = (typeof this.y_data[0] == "string") ? this.amountOfElements :
-                Utils.myMath.myRound(this.max(this.y_data));
-            this.minVal_x = (typeof this.x_data[0] == "string") ? 0 : (this.min(this.x_data) < 0 ? this.min(this.x_data) : 0);
-            this.minVal_y = (typeof this.y_data[0] == "string") ? 0 : (this.min(this.y_data) < 0 ? this.min(this.y_data) : 0);
             // console.log(this.maxVal_x, this.maxVal_y);
         }
         max(d) {
@@ -462,6 +616,7 @@ var Charts;
     class ScatterChart extends Charts.Chart {
         constructor(startPoint, width = 300, height = 300) {
             super(startPoint, width, height);
+            this.colorGenerator = new Utils.ColorGenerator();
         }
         addToCanvas() {
             let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
@@ -470,6 +625,9 @@ var Charts;
             let yAxis = new Axises.YAxis(this.height, this.maxVal_y, this.minVal_y);
             yAxis.setStartCoordinate(this.startPoint);
             yAxis.addToCanvas();
+            this.find_maxVal();
+            this.find_minVal();
+            console.log(this.maxVal_x, this.minVal_x, this.maxVal_y, this.minVal_y);
             this.c_x = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_x - this.minVal_x) - 2);
             this.c_y = Math.pow(10, Utils.myMath.countDigOrder(this.maxVal_y - this.minVal_y) - 2);
             this.a_x = (this.maxVal_x - this.minVal_x) / this.c_x;
@@ -477,14 +635,17 @@ var Charts;
             this.int1 = this.width / this.a_x;
             this.int2 = this.height / this.a_y;
             this.addGrid();
-            this.addDots();
+            for (let i = 0; i < this.all_x_data.length; i++) {
+                this.addDots(i);
+            }
         }
-        addDots() {
+        addDots(j) {
             context.save();
-            console.log(-(this.y_data[0] - this.minVal_y) * this.int2 / this.c_y, this.y_data[0], this.int2, this.c_y);
+            let color = this.colorGenerator.next();
+            // console.log(-(this.y_data[0] - this.minVal_y)*this.int2/this.c_y, this.y_data[0],this.int2, this.c_y);
             for (let i = 0; i < this.amountOfElements; i++) {
-                //console.log(this.x_data[i]*this.int1/this.c_x);
-                let d = new Figures.Dot(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y));
+                console.log(this.all_y_data[j][i]);
+                let d = new Figures.Dot(new Figures.Point((this.all_x_data[j][i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.all_y_data[j][i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), color);
                 d.draw();
             }
             context.restore();
@@ -495,15 +656,22 @@ var Charts;
 var Charts;
 (function (Charts) {
     class LineChart extends Charts.ScatterChart {
+        constructor() {
+            super(...arguments);
+            this.colorGenerator = new Utils.ColorGenerator();
+        }
         addToCanvas() {
             super.addToCanvas();
-            this.addLines();
+            for (let i = 0; i < this.all_x_data.length; i++) {
+                this.addLines(i);
+            }
         }
-        addLines() {
-            Utils.Sorter.sortAsc_linechart(this.x_data, this.y_data);
+        addLines(n) {
+            Utils.Sorter.sortAsc_linechart(this.all_x_data[n], this.all_y_data[n]);
             console.log(this.x_data, this.y_data);
-            for (let i = 0; i < this.amountOfElements - 1; i++) {
-                this.drawLine(new Figures.Point((this.x_data[i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), new Figures.Point((this.x_data[i + 1] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.y_data[i + 1] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), 3, 'red');
+            let color = this.colorGenerator.next();
+            for (let i = 0; i < this.all_x_data[n].length; i++) {
+                this.drawLine(new Figures.Point((this.all_x_data[n][i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.all_y_data[n][i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), new Figures.Point((this.all_x_data[n][i + 1] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.all_y_data[n][i + 1] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), 3, color);
             }
         }
         drawLine(start, finish, lineWidth, color) {
@@ -533,6 +701,7 @@ Models.Model.canvas = canvas;
 // let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
 // myGrid.draw();
 let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
+let data1 = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":209, "temp":18}, {"sales":10, "temp":1},{"sales":150, "temp":13}, {"sales":110, "temp":15}]}';
 // let chart = new Charts.ScatterChart(new Figures.Point(100,500));
 // chart.addData(data);
 // context.save();            
@@ -542,5 +711,6 @@ let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp"
 // chart.addToCanvas();
 let zhopa = new Charts.LineChart(new Figures.Point(100, 500));
 zhopa.addData(data);
+zhopa.addData(data1);
 zhopa.addToCanvas();
 //# sourceMappingURL=main.js.map

@@ -24,7 +24,7 @@ namespace Utils{
                
             }
 
-            console.log(this.x_data, this.y_data, this.x_data.length);
+            //console.log(this.x_data, this.y_data, this.x_data.length);
             
 
         }
