@@ -3,6 +3,8 @@ namespace ChartData{
         filename:string;
         text:string;
 
+       static description:object = Utils.JSONparser.description;
+
         constructor(filename:string){
             this.filename = filename;
         }

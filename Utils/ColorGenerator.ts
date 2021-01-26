@@ -6,21 +6,23 @@ namespace Utils{
         private counter = 0;
 
         public next(){
-            if(this.currentColor == 0){
-                this.currentColor = 0xFF0000;
-
-            }else{
-                this.counter++;
-                if(this.counter >= this.colors.length-1){                    
-                    this.counter = this.counter % 5;
-                    this.colors.forEach(c => {
-                        c/=2;
-                    });
-                }
+            
+            if(this.counter >= this.colors.length-1){                    
+                this.counter = this.counter % 5;
+                   this.colors.forEach(c => {
+                    c/=2;
+                });
+             }
                 this.currentColor = this.colors[this.counter];
+                ++this.counter;
+            
+            let hexcolor:string = this.currentColor.toString(16).toUpperCase();
+            let zeroSToAdd:number = 6-hexcolor.length;
+            for(let i:number = 0; i<zeroSToAdd; ++i){
+                hexcolor="0"+hexcolor;
             }
 
-            return "#"+this.currentColor;
+            return "#"+hexcolor;
         }
 
         public refresh(){

@@ -1,7 +1,7 @@
 namespace Utils{
     export class JSONparser{
         static data:Array<object>;
-        static description:object;
+        static description:object ={};
         static amountOfElements:number = 0;
         static x_data:Array<any> = [];
         static y_data:Array<any> = [];
@@ -13,6 +13,7 @@ namespace Utils{
             //console.log(this.data);
 
             this.description = data["description"];
+            console.log(this.description);
 
             this.amountOfElements = this.data.length;
             

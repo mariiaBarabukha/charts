@@ -105,7 +105,7 @@ namespace Charts{
                         max_x = a;
                     }
                 }
-                console.log(max_x);
+                
 
                 this.maxVal_x = Utils.myMath.myRound(max_x);
             }
@@ -119,7 +119,7 @@ namespace Charts{
                         max_y = a;
                     }
                 }
-                console.log(max_y);
+               
 
                 this.maxVal_y = Utils.myMath.myRound(max_y);
             }
@@ -146,6 +146,7 @@ namespace Charts{
             Utils.JSONparser.parse(dataJSON);
             this.data = Utils.JSONparser.data;
             this.description = Utils.JSONparser.description;
+            ChartData.Data.description = this.description;
 
         
             this.x_data =  Utils.JSONparser.x_data;
@@ -154,13 +155,13 @@ namespace Charts{
           
 
             this.amountOfElements = Utils.JSONparser.amountOfElements;
-            console.log(this.all_x_data);
+            
 
             //let all_len = this.all_x_data;
             this.all_x_data.push(this.arrayCopy(this.x_data));
             this.all_y_data.push(this.arrayCopy(this.y_data));
             
-            console.log(this.all_x_data);
+            
 
           // console.log(this.all_x_data,this.all_y_data);
 

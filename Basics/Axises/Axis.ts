@@ -30,12 +30,16 @@ namespace Axises{
         protected abstract calculateFinishPoint():Figures.Point;
 
         addToCanvas(){      
-            console.log(this.length);
+            
             this.finishPoint = this.calculateFinishPoint();
             let a: Figures.Arrow = new Figures.Arrow(this.startPoint, this.finishPoint, 
             new Figures.ArrowHeads.SimpleArrowHead(this.finishPoint, Parameters.Parameters.def_arrowHeadWidth,
                  Parameters.Parameters.def_arrowHeadHeight));
             
         }
+
+        abstract addAxisName();
+        abstract addLabel();
+        
     }
 }

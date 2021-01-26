@@ -26,5 +26,14 @@ namespace Figures{
             context.fill();
             context.restore();
         }
+
+        justStroke(){
+            context.save();
+            context.beginPath();
+            context.strokeStyle = "black";
+            context.arc(this.p.x, this.p.y, this.radius, 0, Math.PI * 2);
+            context.stroke();
+            context.restore();
+        }
     }
 }

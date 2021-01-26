@@ -4,7 +4,7 @@ namespace Figures{
 
         draw(start:Point, finish: Point, lineWidth: number = Parameters.Parameters.def_lineWidth,
              color:string = Parameters.Parameters.def_color){
-            console.log(start,finish);     
+             
             context.save();
             context.beginPath();
             context.moveTo(start.x, start.y);
