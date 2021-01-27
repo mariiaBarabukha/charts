@@ -26,6 +26,8 @@
         "./Basics/Grid/CombinedGrid.ts",
         
 
+        "./Basics/Legend.ts",
+
         "./Basics/Figures/Arrow.ts",        
 
         "./Basics/Figures/ArrowHeads/ArrowHead.ts",

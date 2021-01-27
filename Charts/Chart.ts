@@ -32,7 +32,7 @@ namespace Charts{
         all_x_data:Array<Array<any>> = [];
         all_y_data:Array<Array<any>> = [];
         constructor(startPoint:Figures.Point, width:number = 300, height:number = 300){
-            this.startPoint = new Figures.Point(startPoint.x+Parameters.Parameters.margin, startPoint.y+Parameters.Parameters.margin);
+            this.startPoint = new Figures.Point(startPoint.x, startPoint.y);
             this.width = width;
             this.height = height;
         }

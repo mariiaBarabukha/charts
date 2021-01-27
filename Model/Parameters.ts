@@ -7,6 +7,8 @@ namespace Parameters{
         static def_arrowHeadHeight:number = 10;
 
         static margin:number = 30;
+        static left_margin:number = 30;
+        static bottom_margin:number = 30;
 
         static def_intervals:number = 20;
     }

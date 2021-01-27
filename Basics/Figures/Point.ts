@@ -7,5 +7,9 @@ namespace Figures{
             this.x=x;
             this.y=y;
         }
+
+        public plus(p:Point){
+            return new Point(this.x+p.x, this.y+p.y);
+        }
     }
 }

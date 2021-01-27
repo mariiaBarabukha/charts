@@ -47,6 +47,7 @@ var Utils;
                 this.x_data[i] = (this.data[i])[this.description["x"]];
                 this.y_data[i] = (this.data[i])[this.description["y"]];
             }
+            this.names.push(this.description["name"]);
             //console.log(this.x_data, this.y_data, this.x_data.length);
         }
     }
@@ -54,6 +55,7 @@ var Utils;
     JSONparser.amountOfElements = 0;
     JSONparser.x_data = [];
     JSONparser.y_data = [];
+    JSONparser.names = [];
     Utils.JSONparser = JSONparser;
 })(Utils || (Utils = {}));
 var Utils;
@@ -191,6 +193,7 @@ var ChartData;
         }
     }
     Data.description = Utils.JSONparser.description;
+    Data.names = [];
     ChartData.Data = Data;
 })(ChartData || (ChartData = {}));
 var Parameters;
@@ -202,6 +205,8 @@ var Parameters;
     Parameters.def_arrowHeadWidth = 5;
     Parameters.def_arrowHeadHeight = 10;
     Parameters.margin = 30;
+    Parameters.left_margin = 30;
+    Parameters.bottom_margin = 30;
     Parameters.def_intervals = 20;
     Parameters_1.Parameters = Parameters;
 })(Parameters || (Parameters = {}));
@@ -211,6 +216,9 @@ var Figures;
         constructor(x, y) {
             this.x = x;
             this.y = y;
+        }
+        plus(p) {
+            return new Point(this.x + p.x, this.y + p.y);
         }
     }
     Figures.Point = Point;
@@ -352,6 +360,66 @@ var Grid;
     }
     Grid.CombinedGrid = CombinedGrid;
 })(Grid || (Grid = {}));
+var Legend;
+(function (Legend_1) {
+    let Location;
+    (function (Location) {
+        Location[Location["Bottom"] = 0] = "Bottom";
+        Location[Location["Left"] = 1] = "Left";
+        Location[Location["Right"] = 2] = "Right";
+    })(Location = Legend_1.Location || (Legend_1.Location = {}));
+    // enum Shape{
+    //     Round,
+    //     Square
+    // }
+    class Legend {
+        constructor(startPoint, x_len, y_len, location = Location.Bottom) {
+            this.names = [];
+            this.location = location;
+            // this.shape = shape;
+            this.startPoint = startPoint;
+            this.x_len = x_len;
+            this.y_len = y_len;
+            console.log("here");
+        }
+        add() {
+            this.names = ChartData.Data.names;
+            console.log(this.names);
+            let colorGenerator = new Utils.ColorGenerator();
+            let start;
+            switch (this.location) {
+                case Location.Bottom:
+                    start = new Figures.Point(this.x_len / 2 + Parameters.Parameters.left_margin, this.startPoint.y + 40);
+                    break;
+                case Location.Left:
+                    Parameters.Parameters.left_margin = 40;
+                    start = new Figures.Point(5, -(Parameters.Parameters.bottom_margin) - 0.5 * this.y_len + this.startPoint.y);
+                    // console.log(canvas.height - this.y_len/2 - Parameters.Parameters.bottom_margin - (canvas.height-this.startPoint.y));        
+                    break;
+                case Location.Right:
+                    start = new Figures.Point(this.x_len + 10 + Parameters.Parameters.left_margin + this.startPoint.x, -(Parameters.Parameters.bottom_margin) - 0.5 * this.y_len + this.startPoint.y);
+                    break;
+                default: break;
+            }
+            for (let i = 0; i < this.names.length; i++) {
+                let shiftPoint = new Figures.Point(0, 17 * i);
+                let dot = new Figures.Dot(start.plus(shiftPoint), colorGenerator.next());
+                dot.setRadius(4);
+                dot.draw();
+                dot.justStroke();
+                context.save();
+                context.font = "15px serif";
+                context.fillText(this.names[i], start.x + 10, start.y + 17 * i + 3);
+                context.restore();
+                console.log(dot);
+                if (this.location = Location.Bottom) {
+                    Parameters.Parameters.bottom_margin += 10;
+                }
+            }
+        }
+    }
+    Legend_1.Legend = Legend;
+})(Legend || (Legend = {}));
 var Figures;
 (function (Figures) {
     class Arrow {
@@ -506,7 +574,7 @@ var Charts;
             this.scale_y = 1;
             this.all_x_data = [];
             this.all_y_data = [];
-            this.startPoint = new Figures.Point(startPoint.x + Parameters.Parameters.margin, startPoint.y + Parameters.Parameters.margin);
+            this.startPoint = new Figures.Point(startPoint.x, startPoint.y);
             this.width = width;
             this.height = height;
         }
@@ -661,6 +729,10 @@ var Charts;
             this.colorGenerator = new Utils.ColorGenerator();
         }
         addToCanvas() {
+            ChartData.Data.names = Utils.JSONparser.names;
+            let legend = new Legend.Legend(this.startPoint, this.width, this.height, Legend.Location.Right);
+            legend.add();
+            this.startPoint.plus(new Figures.Point(Parameters.Parameters.left_margin, Parameters.Parameters.bottom_margin));
             let xAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
             xAxis.setStartCoordinate(this.startPoint);
             xAxis.addAxisName();
@@ -690,6 +762,7 @@ var Charts;
             for (let i = 0; i < this.amountOfElements; i++) {
                 let d = new Figures.Dot(new Figures.Point((this.all_x_data[j][i] - this.minVal_x) * this.int1 / this.c_x + this.startPoint.x, -(this.all_y_data[j][i] - this.minVal_y) * this.int2 / this.c_y + this.startPoint.y), color);
                 d.draw();
+                d.justStroke();
             }
             context.restore();
         }
@@ -716,7 +789,7 @@ var Charts;
         drawLine(start, finish, lineWidth, color) {
             context.save();
             context.beginPath();
-            context.arc(start.x, start.y, 1, 0, Math.PI * 2);
+            // context.arc(start.x, start.y, 1, 0, Math.PI * 2);
             context.moveTo(start.x, start.y);
             context.lineTo(finish.x, finish.y);
             context.lineWidth = lineWidth + 2;
@@ -743,9 +816,9 @@ let zhopaManager = new ChartData.Data("zhopa");
 // yAxis.addToCanvas();
 // let myGrid:Grid.CombinedGrid = new Grid.CombinedGrid(300,400,50,new Figures.Point(100,600));
 // myGrid.draw();
-let data = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
-let data1 = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":209, "temp":18}, {"sales":10, "temp":1},{"sales":150, "temp":13}, {"sales":110, "temp":15}]}';
-let data2 = '{"description":{"x":"sales", "y":"temp"},"data":[{"sales":100, "temp":10}, {"sales":24, "temp":8},{"sales":110, "temp":13}, {"sales":180, "temp":17}]}';
+let data = '{"description":{"name" : "set1","x":"sales", "y":"temp"},"data":[{"sales":20, "temp":11}, {"sales":211, "temp":13}, {"sales":110, "temp":10}]}';
+let data1 = '{"description":{"name" : "set2","x":"sales", "y":"temp"},"data":[{"sales":209, "temp":18}, {"sales":10, "temp":1},{"sales":150, "temp":13}, {"sales":110, "temp":15}]}';
+let data2 = '{"description":{"name" : "set3","x":"sales", "y":"temp"},"data":[{"sales":100, "temp":10}, {"sales":24, "temp":8},{"sales":110, "temp":13}, {"sales":180, "temp":17}]}';
 // let chart = new Charts.ScatterChart(new Figures.Point(100,500));
 // chart.addData(data);
 // context.save();            

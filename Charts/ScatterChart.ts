@@ -7,6 +7,10 @@ namespace Charts{
         }        
 
         public addToCanvas(){       
+            ChartData.Data.names = Utils.JSONparser.names;
+            let legend = new Legend.Legend(this.startPoint, this.width, this.height, Legend.Location.Right);
+            legend.add();
+            this.startPoint.plus(new Figures.Point(Parameters.Parameters.left_margin, Parameters.Parameters.bottom_margin));
             let xAxis:Axises.XAxis = new Axises.XAxis(this.width, this.maxVal_x, this.minVal_y);
             xAxis.setStartCoordinate(this.startPoint);
             xAxis.addAxisName();
@@ -41,21 +45,17 @@ namespace Charts{
         
         colorGenerator = new Utils.ColorGenerator();
 
-        private addDots(j:number){
-           
+        private addDots(j:number){           
             context.save();        
             let color = this.colorGenerator.next();   
            
-           for(let i:number = 0; i < this.amountOfElements; i++){
-            
-            
-            let d = new Figures.Dot(new Figures.Point((this.all_x_data[j][i] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
-                 -(this.all_y_data[j][i] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y),color);
-            d.draw();
-        }
-            
+           for(let i:number = 0; i < this.amountOfElements; i++){        
+                let d = new Figures.Dot(new Figures.Point((this.all_x_data[j][i] - this.minVal_x)* this.int1/this.c_x + this.startPoint.x,
+                    -(this.all_y_data[j][i] - this.minVal_y)*this.int2/this.c_y+this.startPoint.y),color);
+                d.draw();
+                d.justStroke();
+            }            
             context.restore();
-        }   
-        
+        }
     }
 }

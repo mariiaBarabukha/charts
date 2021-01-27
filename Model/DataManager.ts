@@ -4,6 +4,7 @@ namespace ChartData{
         text:string;
 
        static description:object = Utils.JSONparser.description;
+       static names:string[] = [];
 
         constructor(filename:string){
             this.filename = filename;

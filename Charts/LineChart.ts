@@ -25,7 +25,7 @@ namespace Charts{
            
            context.save();
            context.beginPath();
-           context.arc(start.x, start.y, 1, 0, Math.PI * 2);
+          // context.arc(start.x, start.y, 1, 0, Math.PI * 2);
            context.moveTo(start.x, start.y);
            context.lineTo(finish.x, finish.y);
            context.lineWidth = lineWidth+2;
@@ -33,8 +33,7 @@ namespace Charts{
            context.stroke();
            context.lineWidth = lineWidth;
            context.strokeStyle = color;
-           context.stroke();
-         
+           context.stroke();       
         
         
            context.restore();

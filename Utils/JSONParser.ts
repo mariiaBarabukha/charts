@@ -1,10 +1,11 @@
 namespace Utils{
     export class JSONparser{
         static data:Array<object>;
-        static description:object ={};
+        static description:object ={};        
         static amountOfElements:number = 0;
         static x_data:Array<any> = [];
         static y_data:Array<any> = [];
+        static names:string[] = [];
 
         public static parse(dataJSON:string){
             let data = JSON.parse(dataJSON);           
@@ -24,6 +25,8 @@ namespace Utils{
                 this.y_data[i] = (this.data[i])[this.description["y"]];
                
             }
+
+            this.names.push(this.description["name"]);
 
             //console.log(this.x_data, this.y_data, this.x_data.length);
             
